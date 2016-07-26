@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "UTF-8">
+		<title>Location</title>
+
+		<!-- JQuery -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<style>
+	       #map {
+	        width: 500px;
+	        height: 400px;
+	      }
+	    </style>
+
+	    
+	    <script src = "https://maps.googleapis.com/maps/api/js?key=" + API_KEY_HERE></script>
+	    <script>
+
+	    	var latlon = {lat: 59.886, lng: 10.725};
+
+			function initMap() {
+
+				var map = new google.maps.Map(document.getElementById('map'), {
+					zoom: 14,
+					center: latlon,
+					scaleControl: true
+				});
+
+				var marker = new google.maps.Marker({
+					position: latlon,
+					map: map,
+					title: "LOCATION"
+				});
+				return map;
+			}
+
+
+			function calculateAndDisplayRoute(map) {
+				// var directionsService = new google.maps.DirectionsService;
+				// var directionsDisplay = new google.maps.DirectionsRenderer;
+				// var mode = document.getElementById('travel_mode').value;
+				// directionsService.route({
+				// 	origin: document.getElementById('from').value,
+				// 	destination: document.getElementById('to').value,
+				// 	travelMode: google.maps.TravelMode[mode]
+				// }, function(response, status) {
+				// 	if (status === google.maps.DirectionsStatus.OK) {
+				// 		console.log(response);
+				// 		directionsDisplay.setDirections(response);
+				// 	} else {
+				// 		window.alert('Directions request failed due to ' + status);
+				// 	}
+				// });
+				var directionsService = new google.maps.DirectionsService();
+				var mode = document.getElementById('travel_mode').value;
+				var directionsRequest = {
+					origin: document.getElementById('from').value,
+					destination: document.getElementById('to').value,
+					travelMode: google.maps.TravelMode[mode]
+				};
+				directionsService.route(directionsRequest, function(response, status) {
+
+				})
+			}
+
+			$(document).ready(function() {
+				map = initMap();
+
+				$('#get_directions').submit(function(e) {
+					calculateAndDisplayRoute(map);
+					return false;
+				})
+
+			});
+
+
+
+		</script>
+		
+
+
+	</head>
+	<body>
+		<h1>Information for LOCATION</h1>
+		<h3>MAP CONTAINING LOCATION</h3>
+		
+		<div id = 'map'>
+		</div>
+		<h3>GET DIRECTIONS</h3>
+
+		<div id = 'directions'>
+			<form id = 'get_directions'>
+				<label>From:</label>
+				<input type = 'text' name = 'from' id = 'from'>
+				<label>To:</label>
+				<input type = 'text' name = 'to' id = 'to'>
+				<input type = 'submit' value = "Get Directions">
+			</form>
+		</div>
+		<select id = 'travel_mode' action = ''>
+			<option value = 'DRIVING'>Drive</option>
+			<option value = 'WALKING'>Walk</option>
+			<option value = 'BICYCLING'>Cycle</option>
+			<option value = 'TRANSIT'>Public Transit</option>
+		</select>
+
+		
+
+		<h3>REVIEWS</h3>
+		<h4>ADD REVIEW</h4>
+		<h3>CURRENT WEATHER</h3>
+		<h3>ADD TO FAVORITES</h3>
+
+	</body>
+</html>
