@@ -59,7 +59,6 @@
 			var search_marker;
 
 
-
 			function initAutocomplete() {
 				var map = new google.maps.Map(document.getElementById('map'), {
 					center: latlon,
@@ -103,18 +102,18 @@
 					title: "LOCATION",
 					draggable: true
 				});
-				var markers = [];
+				// var markers = [];
 				searchBox.addListener('places_changed', function() {
 					var places = searchBox.getPlaces();
 
 					if (places.length == 0) {
 						return;
 					}
-					//clear out old markers
-					markers.forEach(function(marker) {
-						marker.setMap(null);
-					});
-					markers = [];
+					// //clear out old markers
+					// markers.forEach(function(marker) {
+					// 	marker.setMap(null);
+					// });
+					// markers = [];
 
 					//for each place, get icon, name, location
 					var bounds = new google.maps.LatLngBounds();
@@ -143,14 +142,20 @@
 						}
 					});
 					map.fitBounds(bounds);
+					var newlat = places[0]['geometry']['location'].lat();
+					var newlon = places[0]['geometry']['location'].lng();
+					search_marker.setPosition({lat: newlat, lng: newlon});
 				});
 			}
 
 			function getSearchMarkerPosition() {
-				console.log(search_marker.getPosition());
+				//put lat/lon coordinates in search boxes
+				$(document.getElementById('latitude')).attr('value', search_marker.getPosition().lat())
+				$(document.getElementById('longitude')).attr('value', search_marker.getPosition().lng())
 			}
 			$(document).ready(function() {
 				initAutocomplete();
+				getSearchMarkerPosition();
 				google.maps.event.addListener(search_marker, 'dragend', function() {
 					getSearchMarkerPosition();
 				})
@@ -159,19 +164,16 @@
 		</script>
 
 		<script>
+
 			$(document).ready(function() {
 				$('form').submit(function() {
-					var address = document.getElementById('address').value;
-					if (address != "") {
-						console.log('hellow')
-						return false;
-					} 
+
 					$.post($(this).attr('action'), $(this).serialize(), function(response) {
-						if (response.substr(1, 8) != "!DOCTYPE") {
+						if (response.substr(1, 4) != "loca") {
 							//show error if we're not redirecting!
 							$('#errors').html(response);
 						} else {
-							window.location.replace('/location')
+							window.location.replace(response)
 						}
 					});
 					return false;
@@ -196,12 +198,14 @@
 				{% endfor %} -->
 			</div>
 			<form action = '/location/add' method = 'post'>
+				<label>Location Name:</label>
+				<input type = 'text' name = 'name' required>
 				<label>Address:</label>
 				<input id = 'address' type = 'text' name = 'address'>
 				<label>Latitude:</label>
-				<input type = 'text' name = 'latitude'>
+				<input id = 'latitude' type = 'text' name = 'latitude'>
 				<label>Longitude:</label>
-				<input type = 'text' name = 'longitude'>
+				<input id = 'longitude' type = 'text' name = 'longitude'>
 				<input type = 'submit' value = 'Add Location'>
 			</form>
 		</div>

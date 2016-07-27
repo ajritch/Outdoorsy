@@ -14,15 +14,27 @@ class Location(Model):
         super(Location, self).__init__()
 
     def add(self, info):
+        errors = []
+        if info['name'] == '':
+            errors.append('You must enter a location name.')
         if not (info['address'] or (info['latitude'] and info['longitude'])):
-            return {'status': False, 'error': 'You must enter either an address or a pair of coordinates.'}
-        return {'status': True}
+            errors.append('You must enter either an address or a pair of coordinates.')
+        if errors:
+            return {'status': False, 'errors': errors}
+        query = "INSERT INTO locations (name, latitude, longitude, created_at) VALUES (:name, :latitude, :longitude, NOW())"
+        data = {
+            'name': info['name'],
+            'latitude': info['latitude'],
+            'longitude': info['longitude']
+        }
+        id = self.db.query_db(query, data)
+        return {'status': True, 'id': id}
 
     def get_by_id(self, id):
         query = ('SELECT * FROM locations ' +
                 'WHERE id = :id')
         data = {'id': id}
-        return self.db.query_db(query, data)
+        return self.db.query_db(query, data)[0]
     
 
 

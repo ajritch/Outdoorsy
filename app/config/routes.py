@@ -22,9 +22,7 @@ routes['GET']['/home'] = 'Locations#index'
 routes['GET']['/search'] = 'Locations#search'
 routes['POST']['/register'] = 'Users#register'
 routes['POST']['/location/add'] = 'Locations#add'
-
-#change these once db involved (RESTful):
-routes['/location'] = 'Locations#location'
+routes['/location/<int:id>'] = 'Locations#location'
 
 
 
