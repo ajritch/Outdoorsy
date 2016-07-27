@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+	<head>
+		<meta charset = 'UTF-8'>
+		<title>Search for Locations</title>
+
+		<!-- JQuery -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+		<style>
+			#map {
+				height: 400px;
+				width: 100%;
+			}
+			.controls {
+				margin-top: 10px;
+				border: 1px solid transparent;
+				border-radius: 2px 0px 0px 2px;
+				box-sizing: border-box;
+				height: 32px;
+				outline: none;
+				box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+			}
+			#pac-input {
+				background-color: #fff;
+				font-family: Roboto, sans-serif;
+				font-size: 15px;
+				margin-left: 12px;
+				padding: 0px 11px 0px 13px;
+				text-overflow: ellipsis;
+				width: 300px;
+			}
+			#pac-input:focus {
+				border-color: #4d90fe;
+			}
+			.pac-container {
+				font-family: Roboto, sans-serif;
+			}
+			#type-selector {
+				color: #fff;
+				background-color: #4d90fe;
+				padding: 5px 11px 0px 11px;
+			}
+			#type-selector label {
+				font-family: Roboto;
+				font-size: 13px;
+			}
+			#target {
+				width: 345px;
+			}
+		</style>
+
+		<script src = "https://maps.googleapis.com/maps/api/js?key=KEEEEY&libraries=places"></script>
+
+		<script>
+			var latlon = {lat: 37.377, lng: -121.912};
+			var latlist = [37.39, 37.5];
+			var lonlist = [-121.8, -121.9];
+			var search_marker;
+
+
+
+			function initAutocomplete() {
+				var map = new google.maps.Map(document.getElementById('map'), {
+					center: latlon,
+					zoom: 13
+				});
+
+				//display all already known markers
+				//CHANGE THEIR COLORS!
+				var icon = { url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+						};
+				for (var i = 0; i < latlist.length; i++) {
+					var latlngset = new google.maps.LatLng(latlist[i], lonlist[i]);
+					var marker = new google.maps.Marker({
+						map: map, position: latlngset, icon: icon
+					});
+					
+					var content = "<h3>lat: " + latlist[i] + ", lon: " + lonlist[i] + "</h3>";
+					var infowindow = new google.maps.InfoWindow();
+					google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) {
+						return function() {
+							infowindow.setContent(content);
+							infowindow.open(map, marker);
+							// map.setCenter(marker.getPosition());
+						};
+					})(marker, content, infowindow));
+				}
+
+				//create search box
+				var input = document.getElementById('pac-input');
+				var searchBox = new google.maps.places.SearchBox(input);
+				map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+				//bias searchbox results towards current map's viewport
+				map.addListener('bounds_changed', function() {
+					searchBox.setBounds(map.getBounds());
+				});
+
+				search_marker = new google.maps.Marker({
+					position: latlon,
+					map: map,
+					title: "LOCATION",
+					draggable: true
+				});
+				var markers = [];
+				searchBox.addListener('places_changed', function() {
+					var places = searchBox.getPlaces();
+
+					if (places.length == 0) {
+						return;
+					}
+					//clear out old markers
+					markers.forEach(function(marker) {
+						marker.setMap(null);
+					});
+					markers = [];
+
+					//for each place, get icon, name, location
+					var bounds = new google.maps.LatLngBounds();
+					places.forEach(function(place) {
+						if (!place.geometry) {
+							console.log('Returned place contains no geometry.');
+							return;
+						}
+						// var icon = {
+						// 	url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+						// };
+
+						// //create marker for each place
+						// markers.push(new google.maps.Marker({
+						// 	map: map,
+						// 	icon: icon,
+						// 	title: place.name,
+						// 	position: place.geometry.location
+						// }));
+
+						if (place.geometry.viewport) {
+							//only geocodes have viewport
+							bounds.union(place.geometry.viewport);
+						} else {
+							bounds.extend(place.geometry.location);
+						}
+					});
+					map.fitBounds(bounds);
+				});
+			}
+
+			function getSearchMarkerPosition() {
+				console.log(search_marker.getPosition());
+			}
+			$(document).ready(function() {
+				initAutocomplete();
+				google.maps.event.addListener(search_marker, 'dragend', function() {
+					getSearchMarkerPosition();
+				})
+
+			})
+		</script>
+
+		<script>
+			$(document).ready(function() {
+				$('form').submit(function() {
+					var address = document.getElementById('address').value;
+					if (address != "") {
+						console.log('hellow')
+						return false;
+					} 
+					$.post($(this).attr('action'), $(this).serialize(), function(response) {
+						if (response.substr(1, 8) != "!DOCTYPE") {
+							//show error if we're not redirecting!
+							$('#errors').html(response);
+						} else {
+							window.location.replace('/location')
+						}
+					});
+					return false;
+				});
+			});
+			
+		</script>
+
+	</head>
+	<body>
+		<h1>Search to find outdoor spots!</h1>
+		<input id = 'pac-input' class = 'controls' type = 'text' placeholder = 'Search'>
+		<div id = 'map'>
+		</div>
+
+		<div>
+			<h3>Can't find what you're looking for? Drag the red marker on the map window or enter an address/coordinates to add a new location!</h3>
+			<h3>IMPLEMENT ADDING</h3>
+			<div id = 'errors'>
+				<!-- {% for message in get_flashed_messages() %}
+					<p>{{message}}</p>
+				{% endfor %} -->
+			</div>
+			<form action = '/location/add' method = 'post'>
+				<label>Address:</label>
+				<input id = 'address' type = 'text' name = 'address'>
+				<label>Latitude:</label>
+				<input type = 'text' name = 'latitude'>
+				<label>Longitude:</label>
+				<input type = 'text' name = 'longitude'>
+				<input type = 'submit' value = 'Add Location'>
+			</form>
+		</div>
+	</body>
+</html>

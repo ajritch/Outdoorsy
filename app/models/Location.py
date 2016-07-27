@@ -9,9 +9,23 @@
 """
 from system.core.model import Model
 
-class WelcomeModel(Model):
+class Location(Model):
     def __init__(self):
-        super(WelcomeModel, self).__init__()
+        super(Location, self).__init__()
+
+    def add(self, info):
+        if not (info['address'] or (info['latitude'] and info['longitude'])):
+            return {'status': False, 'error': 'You must enter either an address or a pair of coordinates.'}
+        return {'status': True}
+
+    def get_by_id(self, id):
+        query = ('SELECT * FROM locations ' +
+                'WHERE id = :id')
+        data = {'id': id}
+        return self.db.query_db(query, data)
+    
+
+
     """
     Below is an example of a model method that queries the database for all users in a fictitious application
     

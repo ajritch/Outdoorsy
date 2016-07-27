@@ -17,8 +17,11 @@ from system.core.router import routes
     The automatically generated routes respond to all of the http verbs (GET, POST, PUT, PATCH, DELETE)
 """
 routes['default_controller'] = 'Users'
-routes['/login'] = 'Users#login'
-routes['/home'] = 'Locations#index'
+routes['GET']['/login'] = 'Users#login'
+routes['GET']['/home'] = 'Locations#index'
+routes['GET']['/search'] = 'Locations#search'
+routes['POST']['/register'] = 'Users#register'
+routes['POST']['/location/add'] = 'Locations#add'
 
 #change these once db involved (RESTful):
 routes['/location'] = 'Locations#location'

@@ -6,19 +6,56 @@
 
 		<!-- JQuery -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+		<!--define map size-->
 		<style>
 	       #map {
-	        width: 500px;
+	        width: 80%;
 	        height: 400px;
 	      }
 	    </style>
 
-	    
-	    <script src = "https://maps.googleapis.com/maps/api/js?key=" + API_KEY_HERE></script>
-	    <script>
+	    <style>
+	    	.controls {
+	    		margin-top: 10px;
+	    		border: 1px solid transparent;
+	    		border-radius: 2px 0px 0px 2px;
+	    		box-sizing: border-box;
+	    		height: 32px;
+	    		outline: none;
+	    		box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+	    	}
+	    	#origin-input, #destination-input {
+	    		background-color: #fff;
+	    		font-family: Roboto, sans-serif;
+	    		font-size: 15px;
+	    		margin-left: 12px;
+	    		padding: 0px 11px 0px 13px;
+	    		text-overflow: ellipsis;
+	    		width: 200px;
+	    	}
+	    	#origin-input:focus, #destination-input:focus {
+	    		border-color: #4d90fe;
+	    	}
+	    	#mode-selector {
+	    		color: #4d90fe;
+	    		background-color: #fff;
+	    		margin-left: 12px;
+	    		padding: 5px 11px 6px 11px;
+	    		height: auto;
+	    	}
+	    	#mode-selector label {
+	    		font-family: Roboto, sans-serif;
+	    		font-size: 13px;
+	    	}
+	    </style>
+	  
+	    <script src = "https://maps.googleapis.com/maps/api/js?key=KEEEEY&libraries=places&callback = initMap"></script>
+	    <!--this script handles the map -->
+	    <!-- <script>
+		   	var latlon = {lat: 59.886, lng: 10.725};
 
-	    	var latlon = {lat: 59.886, lng: 10.725};
-
+	    	//make a map with a marker at our location
 			function initMap() {
 
 				var map = new google.maps.Map(document.getElementById('map'), {
@@ -36,46 +73,164 @@
 			}
 
 
-			function calculateAndDisplayRoute(map) {
-				// var directionsService = new google.maps.DirectionsService;
-				// var directionsDisplay = new google.maps.DirectionsRenderer;
-				// var mode = document.getElementById('travel_mode').value;
-				// directionsService.route({
-				// 	origin: document.getElementById('from').value,
-				// 	destination: document.getElementById('to').value,
-				// 	travelMode: google.maps.TravelMode[mode]
-				// }, function(response, status) {
-				// 	if (status === google.maps.DirectionsStatus.OK) {
-				// 		console.log(response);
-				// 		directionsDisplay.setDirections(response);
-				// 	} else {
-				// 		window.alert('Directions request failed due to ' + status);
-				// 	}
-				// });
+			// calulate and display a new route on the map
+			function calculateAndDisplayRoute(map, directionsDisplay) {
+
 				var directionsService = new google.maps.DirectionsService();
 				var mode = document.getElementById('travel_mode').value;
+				var origin = document.getElementById('from').value;
+				var destination = document.getElementById('to').value;
+
 				var directionsRequest = {
-					origin: document.getElementById('from').value,
-					destination: document.getElementById('to').value,
+					origin: origin,
+					destination: destination,
 					travelMode: google.maps.TravelMode[mode]
-				};
+				}
+
 				directionsService.route(directionsRequest, function(response, status) {
+					//status OK? add to map and print to user
+					if (status == google.maps.DirectionsStatus.OK) {
+						directionsDisplay.setMap(map);
+						directionsDisplay.setDirections(response);
 
-				})
+						//print directions for user
+						var steps = response['routes'][0]['legs'][0]['steps'];
+						htmlStr = "";
+						htmlStr += "<h3>Directions from " + response['routes'][0]['legs'][0]['start_address'] + " to " + response['routes'][0]['legs'][0]['end_address'] + ":</h3>";
+
+						htmlStr += "<ol>";
+						for (var i = 0; i < steps.length; i++) {
+							htmlStr += "<li><p>" + steps[i]['instructions'] + "</p></li>";
+						}
+						htmlStr += "</ol>";
+
+					} else {
+						//route search failed; switch things up
+						htmlStr = "<p>Sorry, there are no routes available for your selected mode of transit.</p>";
+					}
+					//add a google search here to allow for other searches
+					$('#directions-text').html(htmlStr);
+
+				});
 			}
+		</script> -->
+		<script>
+			var latlon = {lat: 59.886, lng: 10.725};
+			function initMap() {
+				var origin_place_id = null;
+				var destination_place_id = null;
+				var travel_mode = google.maps.TravelMode.WALKING;
+				var map = new google.maps.Map(document.getElementById('map'), {
+					center: latlon,
+					zoom: 13
+				});
+				var directionsService = new google.maps.DirectionsService;
+				var directionsDisplay = new google.maps.DirectionsRenderer;
+				directionsDisplay.setMap(map);
 
+				var origin_input = document.getElementById('origin-input');
+				var destination_input = document.getElementById('destination-input');
+				var modes = document.getElementById('mode-selector');
+
+				map.controls[google.maps.ControlPosition.TOP_LEFT].push(origin_input);
+				map.controls[google.maps.ControlPosition.TOP_LEFT].push(destination_input);
+				map.controls[google.maps.ControlPosition.TOP_LEFT].push(modes);
+
+				var origin_autocomplete = new google.maps.places.Autocomplete(origin_input);
+				origin_autocomplete.bindTo('bounds', map);
+				var destination_autocomplete = new google.maps.places.Autocomplete(destination_input);
+				destination_autocomplete.bindTo('bounds', map);
+
+				function setupClickListener(id, mode) {
+					var radioButton = document.getElementById(id);
+					radioButton.addEventListener('click', function() {
+						travel_mode = mode;
+					});
+				}
+				setupClickListener('changemode-walking', google.maps.TravelMode.WALKING);
+				setupClickListener('changemode-driving', google.maps.TravelMode.DRIVING);
+				setupClickListener('changemode-bicycling', google.maps.TravelMode.BICYCLING);
+				setupClickListener('changemode-transit', google.maps.TravelMode.TRANSIT);
+
+				function expandViewportToFitPlace(map, place) {
+					if (place.geometry.viewport) {
+						map.fitBounds(place.geometry.viewport);
+					} else {
+						map.setCenter(place.geometry.location);
+						map.setZoom(15);
+					}
+				}
+
+				origin_autocomplete.addListener('place_changed', function() {
+					var place = origin_autocomplete.getPlace();
+					if (!place.geometry) {
+						window.alert("Autocomplete's returned place contains no geometry");
+						return;
+					}
+					expandViewportToFitPlace(map, place);
+					origin_place_id = place.place_id;
+					route(origin_place_id, destination_place_id, travel_mode, directionsService, directionsDisplay);
+				});
+
+				destination_autocomplete.addListener('place_changed', function() {
+					var place = destination_autocomplete.getPlace();
+					if (!place.geometry) {
+						window.alert("Autocomplete's returned place contains no geometry");
+						return;
+					}
+					expandViewportToFitPlace(map, place);
+					destination_place_id = place.place_id;
+					route(origin_place_id, destination_place_id, travel_mode, directionsService, directionsDisplay);
+				});
+
+				function route(origin_place_id, destination_place_id, travel_mode, directionsService, directionsDisplay) {
+					if (!origin_place_id || !destination_place_id) {
+						return;
+					}
+					directionsService.route({
+						origin: {'placeId': origin_place_id},
+						destination: {'placeId': destination_place_id},
+						travelMode: travel_mode
+					}, function(response, status) {
+						if (status === google.maps.DirectionsStatus.OK) {
+							directionsDisplay.setDirections(response);
+							//print directions for user
+							var steps = response['routes'][0]['legs'][0]['steps'];
+							htmlStr = "";
+							htmlStr += "<h3>Directions from " + response['routes'][0]['legs'][0]['start_address'] + " to " + response['routes'][0]['legs'][0]['end_address'] + ":</h3>";
+
+							htmlStr += "<ol>";
+							for (var i = 0; i < steps.length; i++) {
+								htmlStr += "<li><p>" + steps[i]['instructions'] + "</p></li>";
+							}
+							htmlStr += "</ol>";
+							
+
+						} else {
+							window.alert('Directions request failed due to '+ status);
+							//route search failed; switch things up
+							htmlStr = "<p>Sorry, there are no routes available for your selected mode of transit.</p>";
+						}
+						$('#directions-text').html(htmlStr);
+					});
+				}
+			}
+		</script>
+
+		<script>
 			$(document).ready(function() {
+				//initialize map when the page loads
 				map = initMap();
+				var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
 
+				//get/display directions with each click
 				$('#get_directions').submit(function(e) {
-					calculateAndDisplayRoute(map);
+					e.preventDefault();
+					calculateAndDisplayRoute(map, directionsDisplay);
 					return false;
 				})
 
 			});
-
-
-
 		</script>
 		
 
@@ -85,11 +240,25 @@
 		<h1>Information for LOCATION</h1>
 		<h3>MAP CONTAINING LOCATION</h3>
 		
+		<input id = 'origin-input' class = 'controls' type = 'text' placeholder = 'Enter origin location'>
+		<input id = 'destination-input' class = 'controls' type = 'text' placeholder = 'Enter destination location'>
+
+		<div id = 'mode-selector' class = 'controls'>
+			<input type = 'radio' name = 'type' id = 'changemode-driving' checked = 'checked'>
+			<label for = 'changemode-driving'>Drive</label>
+			<input type = 'radio' name = 'type' id = 'changemode-walking'>
+			<label for = 'changemode-walking'>Walk</label>
+			<input type = 'radio' name = 'type' id = 'changemode-bicycling'>
+			<label for = 'changemode-bicycling'>Bicycle</label>
+			<input type = 'radio' name = 'type' id = 'changemode-transit'>
+			<label for = 'changemode-transit'>Public Transit</label>
+		</div>
+
 		<div id = 'map'>
 		</div>
 		<h3>GET DIRECTIONS</h3>
 
-		<div id = 'directions'>
+		<!-- <div id = 'directions'>
 			<form id = 'get_directions'>
 				<label>From:</label>
 				<input type = 'text' name = 'from' id = 'from'>
@@ -97,13 +266,15 @@
 				<input type = 'text' name = 'to' id = 'to'>
 				<input type = 'submit' value = "Get Directions">
 			</form>
+			<select id = 'travel_mode' action = ''>
+				<option value = 'DRIVING'>Drive</option>
+				<option value = 'WALKING'>Walk</option>
+				<option value = 'BICYCLING'>Cycle</option>
+				<option value = 'TRANSIT'>Public Transit</option>
+			</select>
+		</div> -->
+		<div id = 'directions-text'>
 		</div>
-		<select id = 'travel_mode' action = ''>
-			<option value = 'DRIVING'>Drive</option>
-			<option value = 'WALKING'>Walk</option>
-			<option value = 'BICYCLING'>Cycle</option>
-			<option value = 'TRANSIT'>Public Transit</option>
-		</select>
 
 		
 
