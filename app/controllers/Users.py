@@ -21,6 +21,7 @@ class Users(Controller):
     		"fbid": request.form['fbid'],
     		"fbtoken": request.form['fbtoken']
     	}
+        session['token'] = request.form['fbtoken']
 
     	add_user = self.models['User'].add_submit(new_user)
         if add_user['status'] == True:

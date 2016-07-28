@@ -11,6 +11,10 @@
 			#map {
 				height: 400px;
 				width: 100%;
+				/*display: none;*/
+			}
+			#search-stuff {
+				/*display: none;*/
 			}
 			.controls {
 				margin-top: 10px;
@@ -50,13 +54,13 @@
 			}
 		</style>
 
-		<script src = "https://maps.googleapis.com/maps/api/js?key=KEEEEY&libraries=places"></script>
+		<script src = "https://maps.googleapis.com/maps/api/js?key=KEEEY&libraries=places"></script>
 
 		<script>
+			//hard-coded Coding Dojo "user location"
 			var latlon = {lat: 37.377, lng: -121.912};
-			var latlist = [37.39, 37.5];
-			var lonlist = [-121.8, -121.9];
 			var search_marker;
+			var locations = {{locations|tojson}}
 
 
 			function initAutocomplete() {
@@ -69,18 +73,22 @@
 				//CHANGE THEIR COLORS!
 				var icon = { url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
 						};
-				for (var i = 0; i < latlist.length; i++) {
-					var latlngset = new google.maps.LatLng(latlist[i], lonlist[i]);
+				for (var i = 0; i < locations.length; i++) {
+					var latlngset = new google.maps.LatLng(locations[i]['latitude'], locations[i]['longitude']);
 					var marker = new google.maps.Marker({
 						map: map, position: latlngset, icon: icon
 					});
 					
-					var content = "<h3>lat: " + latlist[i] + ", lon: " + lonlist[i] + "</h3>";
+					var content = "<h3><a href = '/location/" + locations[i]['id'] + "'>" + locations[i]['name'] + "</a></h3>";
+					if (locations[i]['description'] != "") {
+						content += "<p>" + locations[i]['description'] + "</p>";
+					}
 					var infowindow = new google.maps.InfoWindow();
 					google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) {
 						return function() {
 							infowindow.setContent(content);
 							infowindow.open(map, marker);
+							infowindow.setOptions({maxWidth: 250})
 							// map.setCenter(marker.getPosition());
 						};
 					})(marker, content, infowindow));
@@ -90,6 +98,7 @@
 				var input = document.getElementById('pac-input');
 				var searchBox = new google.maps.places.SearchBox(input);
 				map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+				input.focus();
 
 				//bias searchbox results towards current map's viewport
 				map.addListener('bounds_changed', function() {
@@ -145,6 +154,7 @@
 					var newlat = places[0]['geometry']['location'].lat();
 					var newlon = places[0]['geometry']['location'].lng();
 					search_marker.setPosition({lat: newlat, lng: newlon});
+					// getSearchMarkerPosition();
 				});
 			}
 
@@ -155,7 +165,7 @@
 			}
 			$(document).ready(function() {
 				initAutocomplete();
-				getSearchMarkerPosition();
+				// getSearchMarkerPosition();
 				google.maps.event.addListener(search_marker, 'dragend', function() {
 					getSearchMarkerPosition();
 				})
@@ -178,20 +188,32 @@
 					});
 					return false;
 				});
+
+				// $('#pac-input').one('focus', function() {
+				// 	initAutocomplete();
+				// 	getSearchMarkerPosition();
+				// 	google.maps.event.addListener(search_marker, 'dragend', function() {
+				// 		getSearchMarkerPosition();
+				// 	});
+				// 	$('#search-stuff').show()
+				// });
 			});
 			
 		</script>
 
 	</head>
 	<body>
+
+		<a href= 'https://www.facebook.com/logout.php?next=http://localhost:5000/&access_token={{ session["token"] }}'><button>Logout</button></a>
+
+
 		<h1>Search to find outdoor spots!</h1>
-		<input id = 'pac-input' class = 'controls' type = 'text' placeholder = 'Search'>
+		<input id = 'pac-input' class = 'controls' type = 'text' placeholder = 'Search locations'>
 		<div id = 'map'>
 		</div>
 
-		<div>
+		<div id = "search-stuff">
 			<h3>Can't find what you're looking for? Drag the red marker on the map window or enter an address/coordinates to add a new location!</h3>
-			<h3>IMPLEMENT ADDING</h3>
 			<div id = 'errors'>
 				<!-- {% for message in get_flashed_messages() %}
 					<p>{{message}}</p>

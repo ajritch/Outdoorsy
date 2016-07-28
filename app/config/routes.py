@@ -22,7 +22,12 @@ routes['GET']['/home'] = 'Locations#index'
 routes['GET']['/search'] = 'Locations#search'
 routes['POST']['/register'] = 'Users#register'
 routes['POST']['/location/add'] = 'Locations#add'
-routes['/location/<int:id>'] = 'Locations#location'
+routes['GET']['/location/<int:id>'] = 'Locations#location'
+routes['POST']['/reviews/add/<int:id>'] = 'Reviews#add'
+routes['GET']['/locations/add_favorite/<int:id>'] = 'Locations#add_favorite'
+routes['POST']['/locations/<int:id>/edit_description'] = 'Locations#edit_description'
+routes['GET']['/remove_favorite/<int:id>'] = 'Locations#remove_favorite'
+routes['GET']['/reviews/delete/<int:location_id>/<int:review_id>'] = 'Reviews#delete'
 
 
 

@@ -22,10 +22,11 @@ class User(Model):
         check_data = {'id': new_user['fbid']}
         check_user = self.db.query_db(check_query, check_data)
         if len(check_user) > 0:
-            update_query = "UPDATE users SET fb_token = :fb_token, updated_at = NOW() WHERE fb_id = :fb_id"
+            update_query = "UPDATE users SET fb_token = :fb_token, name = :name, updated_at = NOW() WHERE fb_id = :fb_id"
             update_data = {
                 'fb_token': new_user['fbtoken'],
-                'fb_id': new_user['fbid']
+                'fb_id': new_user['fbid'],
+                'name': new_user['fbname']
             }
             return {'status': True, 'id': check_user[0]['id']}
         else:

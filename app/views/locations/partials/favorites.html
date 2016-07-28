@@ -1,0 +1,1 @@
+<h2>Favorites</h2>{% if favorites %}{% for favorite in favorites %}<h3><a href = "/location/{{favorite['location_id']}}">{{favorite['name']}}</a></h3><a class = 'remove-favorite btn btn-custom btn-xs' href = "/remove_favorite/{{favorite['location_id']}}">Remove</a>{% endfor %}{% endif %}

@@ -1,0 +1,5 @@
+<div id = 'description'>
+	<form action = "/locations/{{location['id']}}/edit_description" method = post>
+		<textarea class = 'form-control' rows = '7' id = 'desc-text' name = 'description' placeholder = "Enter location description here...">{% if location['description'] != None %}{{location['description']}}{%endif%}</textarea>
+	</form>
+</div>

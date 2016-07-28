@@ -1,0 +1,12 @@
+<div id = 'reviews-text'>
+	{% for review in reviews %}
+		<p class = 'text-primary'>{{review['name']}} says ({{review['updated_at'].strftime("%B %-d, %Y")}}):</p>
+		<p>{{review['content']}}</p>
+		{% if review['user_id'] == session['id'] %}
+			<form class = 'delete-advice' action = "/reviews/delete/{{review['location_id']}}/{{review['id']}}">
+				<input type = 'submit' value = 'Delete' class = 'btn btn-custom btn-xs'>
+			</form>
+		{% endif %}
+		<br><br>
+	{% endfor %}
+</div>

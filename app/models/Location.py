@@ -35,6 +35,47 @@ class Location(Model):
                 'WHERE id = :id')
         data = {'id': id}
         return self.db.query_db(query, data)[0]
+
+    def add_favorite(self, user_id, location_id):
+        data = {
+            'user_id': user_id,
+            'location_id': location_id
+        }
+        #first, check if it's there already
+        check_query = "SELECT * FROM favorites WHERE user_id = :user_id AND location_id = :location_id"
+        check = self.db.query_db(check_query, data)
+        if len(check) > 0:
+            return {'status': False}
+
+        query = ("INSERT INTO favorites (user_id, location_id) " +
+                "VALUES (:user_id, :location_id)")
+        return self.db.query_db(query, data)
+
+    def edit_description(self, info, id):
+        query = "UPDATE locations SET description = :description, updated_at = NOW() WHERE id = :id"
+        data = {
+            'description': info['description'],
+            'id': id
+        }
+        return self.db.query_db(query, data)
+
+    def get_all(self):
+        return self.db.query_db("SELECT * FROM locations")
+
+    def get_favorites(self, id):
+        query = ("SELECT location_id, name FROM favorites " +
+                "JOIN locations ON favorites.location_id = locations.id " +
+                "WHERE favorites.user_id = :id") 
+        data = {'id': id}
+        return self.db.query_db(query, data)
+
+    def remove_favorite(self, user_id, location_id):
+        query = "DELETE FROM favorites WHERE user_id = :user_id AND location_id = :location_id"
+        data = {
+            'user_id': user_id,
+            'location_id': location_id
+        }
+        return self.db.query_db(query, data)
     
 
 
