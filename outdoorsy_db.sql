@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `project_db` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `project_db`;
+CREATE DATABASE  IF NOT EXISTS `outdoorsy_db` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `outdoorsy_db`;
 -- MySQL dump 10.13  Distrib 5.7.9, for osx10.9 (x86_64)
 --
--- Host: localhost    Database: project_db
+-- Host: localhost    Database: outdoorsy_db
 -- ------------------------------------------------------
 -- Server version	5.5.42
 
@@ -68,7 +68,6 @@ CREATE TABLE `locations` (
 
 LOCK TABLES `locations` WRITE;
 /*!40000 ALTER TABLE `locations` DISABLE KEYS */;
-INSERT INTO `locations` VALUES (9,'Bedwell Bayfront Park',NULL,'37.488229685240434','-122.17700225067142','2016-07-27 12:36:34',NULL);
 /*!40000 ALTER TABLE `locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,9 +112,10 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `fb_id` text,
-  `fb_token` text,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -128,7 +128,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Annie Ritch','10201983226580130','EAACTu3RjUGMBAJTrYw0uiuSVIzJLz1k0UzXdLzCYpJpuvUAB89wHb2m6AkxUwk9zZBw9jVZC0Mu5IBezO9Ii7FwiNCKvlA5Ci0DhRGXBcNiCKUtUmEaTuZCzgsxRkCDcVe62CVLkGR6hRgha0RPzagZAqYIlWYoQ0pqu4XSzWgZDZD','2016-07-27 11:10:56','2016-07-27 11:10:56');
+INSERT INTO `users` VALUES (1,'Annie Ritch','10201983226580130','EAACTu3RjUGMBAJTrYw0uiuSVIzJLz1k0UzXdLzCYpJpuvUAB89wHb2m6AkxUwk9zZBw9jVZC0Mu5IBezO9Ii7FwiNCKvlA5Ci0DhRGXBcNiCKUtUmEaTuZCzgsxRkCDcVe62CVLkGR6hRgha0RPzagZAqYIlWYoQ0pqu4XSzWgZDZD',NULL,'2016-07-27 11:10:56','2016-07-27 11:10:56');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -141,4 +141,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-27 14:24:41
+-- Dump completed on 2016-10-02 14:34:30

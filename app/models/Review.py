@@ -17,14 +17,14 @@ class Review(Model):
 
 
     def get_all_by_id(self, location_id):
-        query = ("SELECT reviews.id as id, location_id, content, reviews.updated_at, user_id, name " +
+        query = ("SELECT reviews.id as id, location_id, content, reviews.updated_at, user_id, first_name, last_name " +
                 "FROM reviews JOIN users ON reviews.user_id = users.id " +
                 "WHERE reviews.location_id = :location_id")
         data = {'location_id': location_id}
         return self.db.query_db(query, data)
 
     def show_all(self):
-        query = "SELECT users.name, locations.name AS location, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at, reviews.user_id AS user_id, reviews.location_id AS location_id FROM reviews LEFT JOIN users ON reviews.user_id = users.id LEFT JOIN locations ON reviews.location_id = locations.id ORDER BY reviews.created_at DESC LIMIT 5"
+        query = "SELECT users.first_name, users.last_name, locations.name AS location, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at, reviews.user_id AS user_id, reviews.location_id AS location_id FROM reviews LEFT JOIN users ON reviews.user_id = users.id LEFT JOIN locations ON reviews.location_id = locations.id ORDER BY reviews.created_at DESC LIMIT 5"
         return self.db.query_db(query)
 
     def delete(self, id):

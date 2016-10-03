@@ -65,6 +65,7 @@
 		
 
 		<!-- maps stuff -->
+		<!-- KEEEY -->
 		<script src = "https://maps.googleapis.com/maps/api/js?key=KEEEY&libraries=places"></script>
 
 		<script>
@@ -336,7 +337,7 @@
 					<li class = 'curr-link'><a href = '/home' class = 'navlink'><span>Home</span></a></li>
 				</ul>
 				<ul class = 'nav navbar-nav navbar-right'>
-					<li><a href='https://www.facebook.com/logout.php?next=http://localhost:5000/&access_token={{ session["token"] }}' class = 'navlink'><span>Logout</span></a></li>
+					<li><a href='/logout' class = 'navlink'><span>Logout</span></a></li>
 				</ul>
 			</div>
 		</nav>
@@ -409,7 +410,7 @@
 					<div class = 'reviews'>	
 							<h3><a href='/location/{{ review["location_id"] }}'>{{ review['location'] }}</a></h3>
 							<p>{{ review['content'] }}</p>
-							<p>Posted by: {{ review['name']  }} on {{ review['created_at'].strftime("%B %-d, %Y")}} </p>
+							<p>Posted by: {{ review['first_name']  }} on {{ review['created_at'].strftime("%B %-d, %Y")}} </p>
 					</div>
 					{% endfor %}
 				</div>

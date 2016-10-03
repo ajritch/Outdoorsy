@@ -1,6 +1,6 @@
 <div id = 'reviews-text'>
 	{% for review in reviews %}
-		<p class = 'text-primary'>{{review['name']}} says ({{review['updated_at'].strftime("%B %-d, %Y")}}):</p>
+		<p class = 'text-primary'>{{review['first_name']}} {{review['last_name']}} says ({{review['updated_at'].strftime("%B %-d, %Y")}}):</p>
 		<p>{{review['content']}}</p>
 		{% if review['user_id'] == session['id'] %}
 			<form class = 'delete-advice' action = "/reviews/delete/{{review['location_id']}}/{{review['id']}}">

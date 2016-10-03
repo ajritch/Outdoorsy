@@ -55,7 +55,7 @@
 	    	}
 	    </style>
 	  
-	    <script src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiquOm9WFMncLQxflWIf6_P6wJxxUKbM&libraries=places&callback = initMap"></script>
+	    <script src = "https://maps.googleapis.com/maps/api/js?key=KEEEY&libraries=places&callback = initMap"></script>
 	    <!--this script handles the map -->
 	    <!-- <script>
 		   	var latlon = {lat: 59.886, lng: 10.725};
@@ -283,17 +283,6 @@
 	</head>
 
 	<body>
-		<!-- LOGOUT STUFF -->
-		<div id="fb-root"></div>
-		<script>
-			(function(d, s, id) {
-  			var js, fjs = d.getElementsByTagName(s)[0];
-  			if (d.getElementById(id)) return;
-  			js = d.createElement(s); js.id = id;
-  			js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.7&appId=KEEEY";
-  			fjs.parentNode.insertBefore(js, fjs);
-			}(document, 'script', 'facebook-jssdk'));
-		</script>
 
 
 		<!-- attempt to get photos -->
@@ -311,6 +300,7 @@
 
 
 		<script>
+				//KEEEY
 				api_key = 'KEEEY';
 				$(document).ready(function() {
 					var lat = {{location['latitude']}};
@@ -354,7 +344,7 @@
 					<li><a href = '/home' class = 'navlink'><span>Home</span></a></li>
 				</ul>
 				<ul class = 'nav navbar-nav navbar-right'>
-					<li><a href='https://www.facebook.com/logout.php?next=http://localhost:5000/&access_token={{ session["token"] }}' class = 'navlink'><span>Logout</span></a></li>
+					<li><a href='/logout'><span>Logout</span></a></li>
 				</ul>
 			</div>
 		</nav>
@@ -426,7 +416,7 @@
 				<br>
 				<div id = 'reviews-text'>
 					{% for review in reviews %}
-						<p class = 'text-primary'>{{review['name']}} says ({{review['updated_at'].strftime("%B %-d, %Y")}}):</p>
+						<p class = 'text-primary'>{{review['first_name']}} {{review['last_name']}} says ({{review['updated_at'].strftime("%B %-d, %Y")}}):</p>
 						<p>{{review['content']}}</p>
 						{% if review['user_id'] == session['id'] %}
 							<form class = 'delete-advice' action = "/reviews/delete/{{review['location_id']}}/{{review['id']}}">

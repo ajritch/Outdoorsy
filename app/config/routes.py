@@ -18,9 +18,12 @@ from system.core.router import routes
 """
 routes['default_controller'] = 'Users'
 routes['GET']['/login'] = 'Users#login'
+routes['GET']['/logout'] = 'Users#logout'
+routes['GET']['/register'] = 'Users#register'
+routes['POST']['/login'] = 'Users#do_login'
 routes['GET']['/home'] = 'Locations#index'
 routes['GET']['/search'] = 'Locations#search'
-routes['POST']['/register'] = 'Users#register'
+routes['POST']['/register'] = 'Users#do_register'
 routes['POST']['/location/add'] = 'Locations#add'
 routes['GET']['/location/<int:id>'] = 'Locations#location'
 routes['POST']['/reviews/add/<int:id>'] = 'Reviews#add'
