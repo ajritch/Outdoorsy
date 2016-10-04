@@ -56,7 +56,7 @@ class Users(Controller):
             if 'id' not in session:
                 session['id'] = add_status['id']
                 session['name'] = add_status['first_name']
-            return redirect('/dashboard')
+            return redirect('/home')
             
         
 
